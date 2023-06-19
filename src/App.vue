@@ -1,9 +1,18 @@
 <template>
  <section>
  <header> <h1>My friends</h1></header>
+ <new-friend @add-contact = "addContact"></new-friend>
   <ul>
     <friend-contact 
-    v-for="friend in friends" :key="friend.id" :isFavorite = 'true' :name = "friend.name" :phone-number = "friend.phone" :email-adress = 'friend.email'>
+    v-for="friend in friends" 
+    :key="friend.id" 
+    :id = "friend.id"
+    :isFavorite = "friend.isFavorite" 
+    :name = "friend.name" 
+    :phone-number = "friend.phone" 
+    :email-address = "friend.email" 
+    @toggle-favorite ="toggleFavoriteStatus"
+    @delete-friend = "deleteFriend">
     </friend-contact>
   </ul>
  </section>
@@ -17,19 +26,38 @@ export default {
         id: 'manuel',
         name: 'Manuel Lorenz',
         phone: '0123 456 789',
-        email: 'manuel@gmail.com'
+        email: 'manuel@gmail.com',
+        isFavorite: true
       }, 
       {
         id: 'julie',
         name: 'Julie Jones',
         phone: '0123 456 789',
-        email: 'julie@gmail.com'
+        email: 'julie@gmail.com',
+        isFavorite: false
       }
     ]
     }
   },
   methods: {
-    
+    toggleFavoriteStatus(friendId){
+      const identifiedFriend = this.friends.find(friend => friend.id === friendId);
+      identifiedFriend.isFavorite = !identifiedFriend.isFavorite;
+    },
+    addContact(name, phone, email){
+      const newFriendContact = {
+        id: new Date,
+        name: name,
+        phone: phone,
+        email: email,
+        isFavorite: false
+      }
+      this.friends.push(newFriendContact)
+    },
+    deleteFriend(idFriend){
+      this.friends = this.friends.filter(friend => friend.id !== idFriend)
+      
+    }
   },
   computed: {
     
@@ -69,7 +97,7 @@ header {
   list-style: none;
 }
 
-#app li {
+#app li, #app form {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
   margin: 1rem auto;
   border-radius: 10px;
